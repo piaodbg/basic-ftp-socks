@@ -1,6 +1,6 @@
 # Basic FTP with Socks
 
-This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](https://github.com/patrickjuchli/basic-ftp)), Added support for socks proxy.
+This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](https://github.com/patrickjuchli/basic-ftp)), added support for socks proxy.
 
 # Basic FTP
 
