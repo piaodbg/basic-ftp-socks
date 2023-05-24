@@ -1,4 +1,4 @@
-# Basic FTP with Socks
+# Basic FTP with Socks Proxy
 
 This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](https://github.com/patrickjuchli/basic-ftp)), added support for socks proxy.
 
@@ -19,9 +19,13 @@ This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](
 目前发现还在更新的是 base-ftp(https://github.com/patrickjuchli/basic-ftp) by:patrickjuchli，这个库实在太好用，可惜暂时不支持Socks5。
 所以我Fork了这个项目，增加Socks5支持，但是由于我的实际需要是基于本地本地socks5代理客户端Clash来使用，所以只自己测试过Clash，其他的代理工具并没有测试过。
 
+## Installation
+
+`npm install basic-ftp-socks`
+
 ## Usage
 
-详细可以参考Basic FTP的使用方法，这里只列举新增内容：
+详细可以参考basic-ftp的使用方法，这里只列举新增内容：
 
 ```js
 const ftp = require("basic-ftp") 
@@ -54,6 +58,7 @@ async function example() {
 ```
 注意：目前secure目前设置为false才能用代理，目前我只是简单做了兼容，如果你需要TLS相关，可能你需要自己再次修改代码。
 
+---
 
 # Basic FTP
 

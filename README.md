@@ -1,4 +1,4 @@
-# Basic FTP with Socks
+# Basic FTP with Socks Proxy
 
 This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](https://github.com/patrickjuchli/basic-ftp)), added support for socks proxy.
 
@@ -19,9 +19,13 @@ These libraries exhibit the following characteristics when using Socks5 services
 Currently, I have found that basic-ftp (https://github.com/patrickjuchli/basic-ftp) by patrickjuchli is still actively maintained. It is an excellent library, but unfortunately, it does not support Socks5.
 Therefore, I have forked this project and added Socks5 support. However, since I need to use it based on the local socks5 proxy client Clash, I have only tested it with Clash and have not tested it with other proxy tools.
 
+## Installation
+
+`npm install basic-ftp-socks`
+
 ## Usage
 
-For detailed usage, please refer to the instructions for Basic FTP. Here, I will only list the added content:
+For detailed usage, please refer to the instructions for basic-ftp. Here, I will only list the added content:
 
 ```js
 const ftp = require("basic-ftp") 
@@ -53,6 +57,8 @@ async function example() {
 }
 ```
 Note: Currently, secure is set to false for proxy compatibility. I have made a simple compatibility adjustment. If you require TLS-related functionality, you may need to modify the code accordingly.
+
+---
 
 # Basic FTP
 
