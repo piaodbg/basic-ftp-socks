@@ -1,7 +1,7 @@
 {
-  "name": "basic-ftp",
-  "version": "5.0.3",
-  "description": "FTP client for Node.js, supports FTPS over TLS, IPv6, Async/Await, and Typescript.",
+  "name": "basic-ftp-socks",
+  "version": "5.0.3-1.0",
+  "description": "FTP client for Node.js, supports FTPS over TLS, passive mode over IPv6, async/await, and Typescript. It's a fork with added support for socks proxy.",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -19,19 +19,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/patrickjuchli/basic-ftp.git"
+    "url": "https://github.com/piaodbg/basic-ftp-socks.git"
   },
-  "author": "Patrick Juchli <patrickjuchli@gmail.com>",
+  "author": "piaodbg <piaodbg@gmail.com>",
   "license": "MIT",
   "keywords": [
     "ftp",
     "ftps",
-    "promise",
-    "async",
-    "await",
-    "tls",
-    "ipv6",
-    "typescript"
+	"socks",
+	"socks5",
+	"proxy"
   ],
   "engines": {
     "node": ">=10.0.0"
