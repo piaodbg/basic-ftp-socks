@@ -4,24 +4,24 @@ This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](
 
 ## Advisory
 
-For special reasons, I need to upload files to an FTP server through a local socks5 proxy client provided by Clash. However, I have tried multiple libraries but failed to achieve successful uploads. For example, I have tried:
+由于特殊的原因，我需要通过本地socks5代理客户端Clash提供的服务来上传文件到ftp，奈何尝试了多个库，都未能成功实现上传，
+例如，曾经尝试过
 - socksftp(https://github.com/cgkio/socksftp) by:cgkio
 - socksftp2(https://github.com/bhanuc/socksftp2) by:socksftp2
 - jsftp(https://github.com/sergi/jsftp) by:sergi
 
-These libraries exhibit the following characteristics when using Socks5 services:
+这些库在使用Socks5服务的时候有如下特点：
+1. 可能连不上Clash本地代理服务
+2. 上传文件后，有可能出现服务器文件是0kb
+3. 上传文件报"ECONNRESET"错误后，上传中断或者上传文件不完整
+4. 作者太久没有更新了，可能都不关注这个项目了
 
-1. They may fail to connect to the local Clash proxy service.
-2. After uploading a file, the server file may be 0KB in size.
-3. Uploading a file may result in an "ECONNRESET" error, causing the upload to be interrupted or the file to be incomplete.
-4. The authors have not updated these libraries for a long time, indicating a lack of attention to these projects.
-
-Currently, I have found that basic-ftp (https://github.com/patrickjuchli/basic-ftp) by patrickjuchli is still actively maintained. It is an excellent library, but unfortunately, it does not support Socks5.
-Therefore, I have forked this project and added Socks5 support. However, since I need to use it based on the local socks5 proxy client Clash, I have only tested it with Clash and have not tested it with other proxy tools.
+目前发现还在更新的是 base-ftp(https://github.com/patrickjuchli/basic-ftp) by:patrickjuchli，这个库实在太好用，可惜暂时不支持Socks5。
+所以我Fork了这个项目，增加Socks5支持，但是由于我的实际需要是基于本地本地socks5代理客户端Clash来使用，所以只自己测试过Clash，其他的代理工具并没有测试过。
 
 ## Usage
 
-For detailed usage, please refer to the instructions for Basic FTP. Here, I will only list the added content:
+详细可以参考Basic FTP的使用方法，这里只列举新增内容：
 
 ```js
 const ftp = require("basic-ftp") 
@@ -37,10 +37,10 @@ async function example() {
             host: "myftpserver.com",
             user: "very",
             password: "password",
-            secure: false,               // Set secure to false for proxy compatibility (I have only made it compatible with Clash)
-            useSocksProxy: true,         // Enable the use of socks proxy
-            socksProxyHost: '127.0.0.1', // Local proxy IP
-            socksProxyPort: 10908        // Local proxy port
+            secure: false,               //secure目前设置为false才能用代理
+            useSocksProxy: true,         //使用socks代理
+            socksProxyHost: '127.0.0.1', //本地代理ip
+            socksProxyPort: 10908        //本地代理端口
         })
         console.log(await client.list())
         await client.uploadFrom("README.md", "README_FTP.md")
@@ -52,7 +52,8 @@ async function example() {
     client.close()
 }
 ```
-Note: Currently, secure is set to false for proxy compatibility. I have made a simple compatibility adjustment. If you require TLS-related functionality, you may need to modify the code accordingly.
+注意：目前secure目前设置为false才能用代理，目前我只是简单做了兼容，如果你需要TLS相关，可能你需要自己再次修改代码。
+
 
 # Basic FTP
 
