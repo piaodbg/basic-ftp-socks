@@ -1,6 +1,6 @@
 {
   "name": "basic-ftp-socks",
-  "version": "5.0.3-1.0",
+  "version": "5.0.3-1.2",
   "description": "FTP client for Node.js, supports FTPS over TLS, passive mode over IPv6, async/await, and Typescript. It's a fork with added support for socks proxy.",
   "main": "dist/index",
   "types": "dist/index",

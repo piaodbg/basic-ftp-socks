@@ -28,8 +28,8 @@ Therefore, I have forked this project and added Socks5 support. However, since I
 For detailed usage, please refer to the instructions for basic-ftp. Here, I will only list the added content:
 
 ```js
-const ftp = require("basic-ftp") 
-// ESM: import * as ftp from "basic-ftp"
+const ftp = require("basic-ftp-socks") 
+// ESM: import * as ftp from "basic-ftp-socks"
 
 example()
 

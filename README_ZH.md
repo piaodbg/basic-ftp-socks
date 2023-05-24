@@ -28,8 +28,8 @@ This is a fork of patrickjuchli's basic-ftp([https://github.com/cgkio/socksftp](
 详细可以参考basic-ftp的使用方法，这里只列举新增内容：
 
 ```js
-const ftp = require("basic-ftp") 
-// ESM: import * as ftp from "basic-ftp"
+const ftp = require("basic-ftp-socks") 
+// ESM: import * as ftp from "basic-ftp-socks"
 
 example()
 
