@@ -104,7 +104,7 @@ export class Client {
      * Init accessOption for socks proxy. Now use socksProxy not support TLS yet !
      */
     initAccessOption(accessOptions: AccessOptions) {
-        this._accessOptions = accessOptions;
+        this._accessOptions = accessOptions
         if (this._accessOptions.useSocksProxy === true) {
             const useExplicitTLS = this._accessOptions.secure === true
             const useImplicitTLS = this._accessOptions.secure === "implicit"
@@ -112,7 +112,7 @@ export class Client {
                 throw new Error(`Now use socksProxy not support TLS yet !`) 
             if (typeof this._accessOptions.socksProxyHost === "string"
                 && typeof this._accessOptions.socksProxyPort === "number") {
-                this.ftp.setSocksProxy(this._accessOptions.socksProxyHost, this._accessOptions.socksProxyPort);
+                this.ftp.setSocksProxy(this._accessOptions.socksProxyHost, this._accessOptions.socksProxyPort)
             }
         }
     }
@@ -281,7 +281,7 @@ export class Client {
         const useExplicitTLS = options.secure === true
         const useImplicitTLS = options.secure === "implicit"
         let welcome
-        this.initAccessOption(options);
+        this.initAccessOption(options)
         if (useImplicitTLS) {
             welcome = await this.connectImplicitTLS(options.host, options.port, options.secureOptions)
         }

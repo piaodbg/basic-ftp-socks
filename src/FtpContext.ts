@@ -55,7 +55,7 @@ function doNothing() {
 export class FTPContext {
     /** Debug-level logging of all socket communication. */
     verbose = false
-    verbosePrefix: string = '';
+    verbosePrefix = ''
     /** IP version to prefer (4: IPv4, 6: IPv6, undefined: automatic). */
     ipFamily: number | undefined = undefined
     /** Options for TLS connections. */
@@ -73,9 +73,9 @@ export class FTPContext {
     /** FTP data connection */
     protected _dataSocket: Socket | TLSSocket | undefined
     /** FTP use socks proxy */
-    private _useSocksProxy: Boolean = false;
-    private _socksProxyHost: string = "127.0.0.1";
-    private _socksProxyport: number = 8888;
+    private _useSocksProxy = false
+    private _socksProxyHost = "127.0.0.1"
+    private _socksProxyport = 8888
 
     /**
      * Instantiate an FTP context.
@@ -134,9 +134,9 @@ export class FTPContext {
      * Set socks proxy
      */ 
     public setSocksProxy(socksProxyHost: string, socksProxyport: number) {
-        this._useSocksProxy = true;
-        this._socksProxyHost = socksProxyHost;
-        this._socksProxyport = socksProxyport;
+        this._useSocksProxy = true
+        this._socksProxyHost = socksProxyHost
+        this._socksProxyport = socksProxyport
     }
 
     /**
@@ -380,7 +380,7 @@ export class FTPContext {
             // In this case, there is no need to close the control socket. Instead, let the control socket handle the remaining process.
             if (this._useSocksProxy === true && identifier === "data socket") {
                 if ('code' in error && error.code === "ECONNRESET") {
-                    return;
+                    return
                 }
             }
             error.message += ` (${identifier})`
@@ -443,7 +443,7 @@ export class FTPContext {
      */
     _newSocket(): Socket {
         if (this._useSocksProxy) {
-            return new ProxySocket(this._socksProxyHost, this._socksProxyport) as unknown as Socket;
+            return new ProxySocket(this._socksProxyHost, this._socksProxyport) as unknown as Socket
         }
 
         return new Socket()

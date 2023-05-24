@@ -224,11 +224,11 @@ export interface TransferConfig {
 }
 
 interface UploadConfigs {
-    config: TransferConfig,
-    source: Readable,
-    dataSocket: Socket,
+    config: TransferConfig
+    source: Readable
+    dataSocket: Socket
     remoteSizeAlright: boolean
-};
+}
 
 export function uploadFrom(source: Readable, config: TransferConfig): Promise<FTPResponse> {
     const resolver = new TransferResolver(config.ftp, config.tracker)
@@ -260,7 +260,7 @@ export function uploadFrom(source: Readable, config: TransferConfig): Promise<FT
                         source: source,
                         dataSocket: dataSocket,
                         remoteSizeAlright: false
-                    };
+                    }
                     uploadBySocksProxy(uploadConfigs, err => {
                         if (err) {
                             // When the data transfer socksProxy->server is complete, the dataSocket may receive 'ECONNRESET' error.
@@ -268,7 +268,7 @@ export function uploadFrom(source: Readable, config: TransferConfig): Promise<FT
                             // In this case, if checking indicates that the data has been fully sent, it can be considered a successful transfer;
                             // otherwise, it is considered a failed transfer.
                             if ('code' in err && err.code === "ECONNRESET" && uploadConfigs.remoteSizeAlright) {
-                                config.ftp.log(`Pass the proxy dataSocket err: ${err.code}`);
+                                config.ftp.log(`Pass the proxy dataSocket err: ${err.code}`)
                                 resolver.onDataDone(task)
                             } else {
                                 resolver.onError(task, err)
@@ -276,8 +276,8 @@ export function uploadFrom(source: Readable, config: TransferConfig): Promise<FT
                         } else {
                             resolver.onDataDone(task)
                         }
-                    });
-                    return;
+                    })
+                    return
                 }
 
                 pipeline(source, dataSocket, err => {
@@ -300,55 +300,55 @@ export function uploadFrom(source: Readable, config: TransferConfig): Promise<FT
 }
 
 function uploadBySocksProxy(uploadConfigs: UploadConfigs, cb: (err: any) => void): void  {
-    uploadConfigs.remoteSizeAlright = false;
+    uploadConfigs.remoteSizeAlright = false
     async function checkRemoteSize(translength: number) {
-        const client = new Client();
-        client.ftp.verbosePrefix = '[UploadBySocksProxy Checksize]';
-        client.ftp.verbose = uploadConfigs.config.ftp.verbose;
-        let serverFileSize = 0;
+        const client = new Client()
+        client.ftp.verbosePrefix = '[UploadBySocksProxy Checksize]'
+        client.ftp.verbose = uploadConfigs.config.ftp.verbose
+        let serverFileSize = 0
         try {
-            uploadConfigs.config.ftp.log(`[upload by socks proxy] Connect server for checksize`);
-            await client.access(uploadConfigs.config.accessOptions);
-            serverFileSize = await client.size(uploadConfigs.config.remotePath);
-            console.log(`[upload by socks proxy] checksize: ${uploadConfigs.config.remotePath} : ${serverFileSize}`); 
-            client.close();
+            uploadConfigs.config.ftp.log(`[upload by socks proxy] Connect server for checksize`)
+            await client.access(uploadConfigs.config.accessOptions)
+            serverFileSize = await client.size(uploadConfigs.config.remotePath)
+            console.log(`[upload by socks proxy] checksize: ${uploadConfigs.config.remotePath} : ${serverFileSize}`) 
+            client.close()
         } catch (err) {
-            console.error(`[upload by socks proxy] checksize FTP error: ${err}`);
-            client.close();
+            console.error(`[upload by socks proxy] checksize FTP error: ${err}`)
+            client.close()
         }
         if (serverFileSize === translength) {
             console.log(`[upload by socks proxy] Server file size correct, upload complete!`)
-            uploadConfigs.remoteSizeAlright = true;
-            uploadConfigs.dataSocket?.end();
+            uploadConfigs.remoteSizeAlright = true
+            uploadConfigs.dataSocket?.end()
         } else {
             console.log(`[upload by socks proxy] Warring! The file may not have been transferred complete yet!`)
-            uploadConfigs.dataSocket?.end();
-        }
-    };
-    class CustomPassThrough extends PassThrough {
-        private translength:number;
-        constructor(opts?: TransformOptions) {
-            super(opts);
-            this.translength = 0;
-        }
-        write(chunk: any, encoding?: BufferEncoding, cb?: (error: Error | null | undefined) => void): boolean;
-        write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean;
-        write(chunk: any, encoding?: BufferEncoding | undefined | ((error: Error | null | undefined) => void), cb?: ((error: Error | null | undefined) => void) | undefined): boolean {
-            this.translength += chunk.length;
-            return super.write(chunk, encoding as BufferEncoding, cb);
-        }
-
-        end(cb?: () => void): this;
-        end(chunk: any, cb?: () => void): this;
-        end(chunk: any, encoding?: BufferEncoding, cb?: () => void): this;
-        end(chunk?: any, encoding?: BufferEncoding | (() => void), cb?: () => void): any {
-            console.log(`[upload by socks proxy] The data has been passed to the proxy service, size: ${this.translength}`);
-            console.log(`[upload by socks proxy] It is unknown whether the proxy server has sent all the data and cannot close the connection immediately, so the detection process begins ...`);
-            checkRemoteSize(this.translength);
+            uploadConfigs.dataSocket?.end()
         }
     }
-    const passThrough = new CustomPassThrough();
-    pipeline(uploadConfigs.source, passThrough, uploadConfigs.dataSocket, cb);
+    class CustomPassThrough extends PassThrough {
+        private translength:number
+        constructor(opts?: TransformOptions) {
+            super(opts)
+            this.translength = 0
+        }
+        write(chunk: any, encoding?: BufferEncoding, cb?: (error: Error | null | undefined) => void): boolean
+        write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean
+        write(chunk: any, encoding?: BufferEncoding | undefined | ((error: Error | null | undefined) => void), cb?: ((error: Error | null | undefined) => void) | undefined): boolean {
+            this.translength += chunk.length
+            return super.write(chunk, encoding as BufferEncoding, cb)
+        }
+
+        end(cb?: () => void): this
+        end(chunk: any, cb?: () => void): this
+        end(chunk: any, encoding?: BufferEncoding, cb?: () => void): this
+        end(chunk?: any, encoding?: BufferEncoding | (() => void), cb?: () => void): any {
+            console.log(`[upload by socks proxy] The data has been passed to the proxy service, size: ${this.translength}`)
+            console.log(`[upload by socks proxy] It is unknown whether the proxy server has sent all the data and cannot close the connection immediately, so the detection process begins ...`)
+            checkRemoteSize(this.translength)
+        }
+    }
+    const passThrough = new CustomPassThrough()
+    pipeline(uploadConfigs.source, passThrough, uploadConfigs.dataSocket, cb)
 }
 
 export function downloadTo(destination: Writable, config: TransferConfig): Promise<FTPResponse> {
