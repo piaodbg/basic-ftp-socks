@@ -2,6 +2,7 @@ import { Socket } from "net"
 import { ConnectionOptions as TLSConnectionOptions, TLSSocket } from "tls"
 import { parseControlResponse } from "./parseControlResponse"
 import { StringEncoding } from "./StringEncoding"
+import { ProxySocket } from "./proxySocket"
 
 interface Task {
     /** Handles a response for a task. */
@@ -54,6 +55,7 @@ function doNothing() {
 export class FTPContext {
     /** Debug-level logging of all socket communication. */
     verbose = false
+    verbosePrefix: string = '';
     /** IP version to prefer (4: IPv4, 6: IPv6, undefined: automatic). */
     ipFamily: number | undefined = undefined
     /** Options for TLS connections. */
@@ -70,6 +72,10 @@ export class FTPContext {
     protected _socket: Socket | TLSSocket
     /** FTP data connection */
     protected _dataSocket: Socket | TLSSocket | undefined
+    /** FTP use socks proxy */
+    private _useSocksProxy: Boolean = false;
+    private _socksProxyHost: string = "127.0.0.1";
+    private _socksProxyport: number = 8888;
 
     /**
      * Instantiate an FTP context.
@@ -122,6 +128,15 @@ export class FTPContext {
      */
     get closed(): boolean {
         return this.socket.remoteAddress === undefined || this._closingError !== undefined
+    }
+
+    /**
+     * Set socks proxy
+     */ 
+    public setSocksProxy(socksProxyHost: string, socksProxyport: number) {
+        this._useSocksProxy = true;
+        this._socksProxyHost = socksProxyHost;
+        this._socksProxyport = socksProxyport;
     }
 
     /**
@@ -294,7 +309,7 @@ export class FTPContext {
     log(message: string) {
         if (this.verbose) {
             // tslint:disable-next-line no-console
-            console.log(message)
+            console.log(`${this.verbosePrefix}${message}`)
         }
     }
 
@@ -360,6 +375,14 @@ export class FTPContext {
      */
     protected _setupDefaultErrorHandlers(socket: Socket, identifier: string) {
         socket.once("error", error => {
+            // When the data transfer socksProxy->server is complete, the dataSocket may receive 'ECONNRESET' error.
+            // Due to the avoidance of prematurely calling socket.end() to ensure complete data transmission, the optimal timing for ending the connection was missed.
+            // In this case, there is no need to close the control socket. Instead, let the control socket handle the remaining process.
+            if (this._useSocksProxy === true && identifier === "data socket") {
+                if ('code' in error && error.code === "ECONNRESET") {
+                    return;
+                }
+            }
             error.message += ` (${identifier})`
             this.closeWithError(error)
         })
@@ -419,6 +442,10 @@ export class FTPContext {
      * Internal use only, replaced for unit tests.
      */
     _newSocket(): Socket {
+        if (this._useSocksProxy) {
+            return new ProxySocket(this._socksProxyHost, this._socksProxyport) as unknown as Socket;
+        }
+
         return new Socket()
     }
 }

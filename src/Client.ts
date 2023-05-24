@@ -34,6 +34,10 @@ export interface AccessOptions {
     readonly secure?: boolean | "implicit"
     /** TLS options as in [tls.connect(options)](https://nodejs.org/api/tls.html#tls_tls_connect_options_callback), optional. */
     readonly secureOptions?: TLSConnectionOptions
+    /** Use socks proxy, now only support socks5 */
+    readonly useSocksProxy?: boolean
+    readonly socksProxyHost?: string
+    readonly socksProxyPort?: number
 }
 
 /** Prepares a data connection for transfer. */
@@ -63,6 +67,7 @@ export class Client {
     readonly ftp: FTPContext
     /** Tracks progress of data transfers. */
     protected _progressTracker: ProgressTracker
+    private _accessOptions?: AccessOptions
 
     /**
      * Instantiate an FTP client.
@@ -93,6 +98,23 @@ export class Client {
      */
     get closed(): boolean {
         return this.ftp.closed
+    }
+
+    /**
+     * Init accessOption for socks proxy. Now use socksProxy not support TLS yet !
+     */
+    initAccessOption(accessOptions: AccessOptions) {
+        this._accessOptions = accessOptions;
+        if (this._accessOptions.useSocksProxy === true) {
+            const useExplicitTLS = this._accessOptions.secure === true
+            const useImplicitTLS = this._accessOptions.secure === "implicit"
+            if (useExplicitTLS || useImplicitTLS)
+                throw new Error(`Now use socksProxy not support TLS yet !`) 
+            if (typeof this._accessOptions.socksProxyHost === "string"
+                && typeof this._accessOptions.socksProxyPort === "number") {
+                this.ftp.setSocksProxy(this._accessOptions.socksProxyHost, this._accessOptions.socksProxyPort);
+            }
+        }
     }
 
     /**
@@ -259,6 +281,7 @@ export class Client {
         const useExplicitTLS = options.secure === true
         const useImplicitTLS = options.secure === "implicit"
         let welcome
+        this.initAccessOption(options);
         if (useImplicitTLS) {
             welcome = await this.connectImplicitTLS(options.host, options.port, options.secureOptions)
         }
@@ -465,7 +488,8 @@ export class Client {
                 tracker: this._progressTracker,
                 command,
                 remotePath: validPath,
-                type: "upload"
+                type: "upload",
+                accessOptions: this._accessOptions
             })
         }
         finally {
