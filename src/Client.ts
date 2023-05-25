@@ -105,6 +105,7 @@ export class Client {
      */
     initAccessOption(accessOptions: AccessOptions) {
         this._accessOptions = accessOptions
+        this.ftp.accessOptions = accessOptions
         if (this._accessOptions.useSocksProxy === true) {
             const useExplicitTLS = this._accessOptions.secure === true
             const useImplicitTLS = this._accessOptions.secure === "implicit"

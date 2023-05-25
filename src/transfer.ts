@@ -19,7 +19,10 @@ export async function enterPassiveModeIPv6(ftp: FTPContext): Promise<FTPResponse
     if (!port) {
         throw new Error("Can't parse EPSV response: " + res.message)
     }
-    const controlHost = ftp.socket.remoteAddress
+    let controlHost = ftp.socket.remoteAddress
+    if (ftp.accessOptions.useSocksProxy) {
+        controlHost = ftp.accessOptions.host
+    }
     if (controlHost === undefined) {
         throw new Error("Control socket is disconnected, can't get remote address.")
     }

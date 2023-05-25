@@ -3,6 +3,7 @@ import { ConnectionOptions as TLSConnectionOptions, TLSSocket } from "tls"
 import { parseControlResponse } from "./parseControlResponse"
 import { StringEncoding } from "./StringEncoding"
 import { ProxySocket } from "./proxySocket"
+import { AccessOptions } from "./Client"
 
 interface Task {
     /** Handles a response for a task. */
@@ -56,6 +57,7 @@ export class FTPContext {
     /** Debug-level logging of all socket communication. */
     verbose = false
     verbosePrefix = ''
+    accessOptions: AccessOptions = {}
     /** IP version to prefer (4: IPv4, 6: IPv6, undefined: automatic). */
     ipFamily: number | undefined = undefined
     /** Options for TLS connections. */
